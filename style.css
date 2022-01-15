@@ -11,10 +11,16 @@ body {
 	background: var(--background);
 	color: var(--text);
 	font-family: "Cutive Mono", monospace;
+	margin: 0 0 0;
 }
 
 h3 {
 	font-size: 2em;
+	margin: 0 0 0;
+}
+
+ul, p {
+	margin: 0 0 0;
 }
 
 .instructions {
@@ -29,8 +35,8 @@ h3 {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	margin: 5px;
-	padding: 2px;
+	margin: 0px;
+	padding: 0px;
 }
 
 .guessbox {
@@ -74,24 +80,32 @@ h3 {
 	padding: 40px 20px 18px 20px;
 }
 
-@keyframes flipAnimation {
+@keyframes fadeInAnimation {
 	from { background: #000; }
 }
 @keyframes badword-animation {
 	from { background: #800; }
 }
+@keyframes success-animation {
+	0%  { background: #008; }
+	20%  { background: var(--green); }
+	40%  { background: #fff; }
+	60%  { background: var(--green); }
+	80%  { background: #800; }
+	100% { background: #008; }
+}
 
 .wrong {
 	background: var(--wrong);
-	animation: flipAnimation 1s;
+	animation: fadeInAnimation 1s;
 }
 .correct-letter {
 	background: var(--yellow);
-	animation: flipAnimation 1s;
+	animation: fadeInAnimation 1s;
 }
 .correct-location {
 	background: var(--green);
-	animation: flipAnimation 1s;
+	animation: fadeInAnimation 1s;
 }
 .badword {
 	animation: badword-animation 3s;
@@ -107,4 +121,8 @@ h3 {
 .selected {
 	background: #888;
 	animation: cycleAnimation 2s infinite;
+}
+
+.success {
+	animation: success-animation 3s infinite;
 }
