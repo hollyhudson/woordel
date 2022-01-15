@@ -76,6 +76,9 @@ h3 {
 @keyframes flipAnimation {
 	from { background: #000; }
 }
+@keyframes badword-animation {
+	from { background: #800; }
+}
 
 .wrong {
 	background: var(--wrong);
@@ -88,6 +91,9 @@ h3 {
 .correct-location {
 	background: var(--green);
 	animation: flipAnimation 1s;
+}
+.badword {
+	animation: badword-animation 3s;
 }
 
 @keyframes cycleAnimation {
