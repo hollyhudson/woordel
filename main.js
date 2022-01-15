@@ -1,4 +1,20 @@
 "use strict";
+// contact the server
+//const sock = io.connect(document.location.origin);
+let in_charge = 0;
+const word_length = 5;
+const max_guesses = 6;
+
+const sock = io.connect("https://paint.v.st/");
+
+sock.on('message', (msg) => console.log(msg));
+sock.on('connect', () => {
+        // ask for an info dump
+        sock.emit('room', 'woordle');
+        sock.emit('info', sock.id);
+});
+sock.on('keypress', (args) => receive_letter(...args));
+
 
 // get all the keyboard keys and attach click event listeners
 for(let k of document.querySelectorAll('.key'))
@@ -11,6 +27,92 @@ let words = {};
 for(let w of wordlist)
 	words[w] = 1;
 
+
+function serialize()
+{
+	let keyboard = {};
+	for(let k of "abcdefghijklmnopqrstuvwxyz")
+		keyboard[k] = document.getElementById(k).classList
+
+	return {
+		guesses: rows.map((row) => row.map((g) => [ g.innerText, g.classList ])),
+		keyboard: keyboard,
+		guess: [ guess_row, guess_col ],
+	};
+}
+
+sock.on('info', (sockid) => {
+	console.log(sockid);
+	if (!in_charge)
+		return;
+
+	let msg = serialize;
+	msg.dest = sockid;
+	msg.topic = 'state';
+
+	sock.emit('to', msg);
+});
+
+sock.on('state', (msg) => {
+	const guesses = msg.guesses;
+	console.log(msg);
+	for(let i = 0 ; i < max_guesses ; i++)
+	{
+		for(let j = 0 ; j < word_length ; j++)
+		{
+			const g = msg.guesses[i][j];
+			const r = rows[i][j];
+			r.innerText = g[0];
+			for(let c in g[1])
+				r.classList.add(g[1][c]);
+		}
+	}
+
+	for(let k in msg.keyboard)
+		for(let c in msg.keyboard[k])
+			document.getElementById(k).classList.add(msg.keyboard[k][c]);
+
+	guess_row = msg.guess[0];
+	guess_col = msg.guess[1];
+
+	if (selected)
+		selected.classList.remove('selected');
+	selected = rows[guess_row][guess_col];
+	if (selected)
+		selected.classList.add('selected');
+});
+
+
+function reset_all()
+{
+	for(let g of document.querySelectorAll('.guessbox'))
+	{
+		g.innerHTML = '&nbsp;';
+		g.classList.remove('wrong');
+		g.classList.remove('badword');
+		g.classList.remove('selected');
+		g.classList.remove('correct-letter');
+		g.classList.remove('correct-location');
+	}
+
+	for(let k of document.querySelectorAll('.key'))
+	{
+		k.classList.remove('wrong');
+		k.classList.remove('correct-letter');
+		k.classList.remove('correct-location');
+	}
+
+	guess_row = 0;
+	guess_col = 0;
+
+	selected = rows[0][0];
+	selected.classList.add('selected');
+
+	const msg = serialize();
+	console.log('sending', msg);
+	sock.emit('state', msg);
+}
+
 function check_word(guesses)
 {
 	// build the guessed word
@@ -22,7 +124,7 @@ function validate(word, guesses)
 {
 	let fail = 0;
 
-	for(let i = 0 ; i < 5 ; i++)
+	for(let i = 0 ; i < word_length ; i++)
 	{
 		const g = guesses[i];
 		const c = g.innerText;
@@ -52,8 +154,26 @@ let guess_row = 0;
 let guess_col = 0;
 let selected;
 
+function receive_letter(row,col,key)
+{
+	if (row == guess_row && col == guess_col)
+		place_letter(key, null);
+	else
+		console.log("mismatch!");
+}
+
 function place_letter(key,e) {
 	console.log(key, e);
+
+	// if this is a local event, broadcast it
+	if (e != null)
+		sock.emit('keypress', [guess_row, guess_col, key]);
+
+	if (key == 'Escape')
+	{
+		reset_all();
+		return;
+	}
 
 	if (key == 'Delete' || key == 'Backspace')
 	{
@@ -72,9 +192,9 @@ function place_letter(key,e) {
 
 	if (key == 'Enter')
 	{
-		if (guess_row == 6)
+		if (guess_row == max_guesses)
 			return;
-		if (guess_col != 5)
+		if (guess_col != word_length)
 			return;
 		if (!check_word(rows[guess_row]))
 		{
@@ -109,7 +229,7 @@ function place_letter(key,e) {
 
 	//e.preventDefault();
 
-	if(guess_col == 5)
+	if(guess_col == word_length)
 	{
 		// too many!
 		return;
@@ -127,14 +247,14 @@ function place_letter(key,e) {
 
 // create the guess rows
 const rows_div = document.getElementById('rows');
-for(let i = 0 ; i < 6 ; i++)
+for(let i = 0 ; i < max_guesses ; i++)
 {
 	const row = document.createElement('div');
 	row.classList.add('row');
 
 	rows[i] = [];
 
-	for(let j = 0 ; j < 5 ; j++)
+	for(let j = 0 ; j < word_length ; j++)
 	{
 		const e = document.createElement('span');
 		e.classList.add('guessbox');
