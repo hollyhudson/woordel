@@ -13,34 +13,43 @@ body {
 	font-family: "Cutive Mono", monospace;
 }
 
-h3 {
+.titles {
 	font-size: 2em;
+	padding: 0px; !important
+	margin: 0px; !important
 }
 
 .instructions {
-	font-size: 2em;
+	font-size: 1.8em;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-around;
+	padding: 0px; !important
+	margin: 0px;!important
+}
+
+ul {
+	padding: 0px;!important
+	margin: 0px;!important
 }
 
 .flex-container-col {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	margin: 5px;
-	padding: 2px;
+	margin: 0px; !important
+	padding: 0px; !important
 }
 
 .guessbox {
 	color: var(--background);
-	font-size: 8em;
+	font-size: 6em;
 	border-style: solid;
 	border-width: 5px;
 	border-color: #444;
-	padding: 5px 25px;
-	margin: 5px;
+	padding: 3px 20px;
+	margin: 4px;
 }
 
 .visible {
@@ -54,10 +63,11 @@ h3 {
 
 .key {
 	color: var(--text);
-	font-size: 5em;
+	font-size: 3em;
 	border-radius: 5px;
 	background: var(--unguessed);
-	padding: 5px 10px;
+	padding: 8px 15px;
+	margin: 6px;
 }
 
 .clicked {
@@ -71,7 +81,7 @@ h3 {
 .key-big {
 	font-size: 2em;
 	/* top right bottom left */
-	padding: 40px 20px 18px 20px;
+	padding: 18px 15px 12px 15px;
 }
 
 @keyframes flipAnimation {
