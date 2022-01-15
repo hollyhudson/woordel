@@ -13,6 +13,14 @@ body {
 	margin: 2px;
 }
 
+.correct-location {
+	background: green;
+}
+
+.correct-letter {
+	background: yellow;
+}
+
 .visible {
 	color: white;
 }
