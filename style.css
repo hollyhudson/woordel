@@ -1,10 +1,20 @@
+:root {
+	--background: black;
+	--text: white;
+	--yellow: #fcb500;
+	--green: #8db008;
+	--wrong: black;
+	--unguessed: #777;
+}
+
 body {
-	background: black;
-	color: black;
+	background: var(--background);
+	color: var(--text);
 	font-family: monospace;
 }
 
 .guessbox {
+	color: var(--background);
 	font-size: 5em;
 	border-style: solid;
 	border-width: 5px;
@@ -14,15 +24,15 @@ body {
 }
 
 .correct-location {
-	background: green;
+	background: var(--green);
 }
 
 .correct-letter {
-	background: yellow;
+	background: var(--yellow);
 }
 
 .visible {
-	color: white;
+	color: var(--text);
 }
 
 .row {
@@ -31,15 +41,15 @@ body {
 }
 
 .key {
+	color: var(--text);
 	font-size: 1.5em;
 	border-radius: 5px;
-	background: #888;
-	color: white;
+	background: var(--unguessed);
 	padding: 8px 10px;
 }
 
 .clicked {
-	background: yellow;
+	background: var(--yellow);
 }
 
 .keysrow {
@@ -48,4 +58,14 @@ body {
 
 .key-big {
 	font-size: 1.2em;
+}
+
+.wrong {
+	background: var(--wrong);
+}
+.correct-letter {
+	background: var(--yellow);
+}
+.correct-location {
+	background: var(--green);
 }
