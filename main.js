@@ -15,7 +15,7 @@ sock.on('connect', () => {
 });
 sock.on('keypress', (args) => receive_letter(...args));
 
-let word = "frank";
+let word = "aaien";
 let words = {};
 for(let w of wordlist)
 	words[w] = 1;
@@ -31,6 +31,8 @@ function serialize()
 		guesses: rows.map((row) => row.map((g) => [ g.innerText, g.classList ])),
 		keyboard: keyboard,
 		guess: [ guess_row, guess_col ],
+		word: word,
+		success: success,
 	};
 }
 
@@ -71,6 +73,7 @@ sock.on('state', (msg) => {
 			d.classList.add(msg.keyboard[k][c]);
 	}
 
+	success = msg.success;
 	guess_row = msg.guess[0];
 	guess_col = msg.guess[1];
 
@@ -103,9 +106,14 @@ function reset_all()
 
 	guess_row = 0;
 	guess_col = 0;
+	success = 0;
 
 	selected = rows[0][0];
 	selected.classList.add('selected');
+
+	// pick a new word!
+	word = wordlist[math.randomInt(wordlist.length)];
+	console.log("NEW WORD", word);
 
 	const msg = serialize();
 	console.log('sending', msg);
@@ -152,6 +160,7 @@ const rows = [];
 let guess_row = 0;
 let guess_col = 0;
 let selected;
+let success = 0;
 
 function receive_letter(row,col,key)
 {
@@ -209,6 +218,12 @@ function place_letter(key,e) {
 		if (validate(word, rows[guess_row]))
 		{
 			console.log('success!');
+			for(let g of rows[guess_row])
+				g.classList.add('success');
+			guess_row = max_guesses;
+			guess_col = 0;
+			success = 1;
+			return;
 		}
 
 		if (selected)
@@ -287,7 +302,10 @@ for(let row of keys)
 		if (k.id.length > 1)
 			k.classList.add("key-big");
 
-		k.addEventListener('click', (e) => place_letter(k.id,e))
+		k.addEventListener('click', (e) => {
+			e.preventDefault();
+			place_letter(k.id,e);
+		})
 		r.appendChild(k);
 	}
 	key_div.appendChild(r);
@@ -296,6 +314,6 @@ for(let row of keys)
 selected = rows[0][0];
 selected.classList.add('selected');
 
-// also bind to the keyboard event
+// also bind to the keyboard event, but don't prevent default
 document.addEventListener('keydown', (e) => place_letter(e.key,e))
 
