@@ -10,15 +10,15 @@
 body {
 	background: var(--background);
 	color: var(--text);
-	font-family: monospace;
+	font-family: "Cutive Mono", monospace;
 }
 
 h3 {
-	font-size: 3em;
+	font-size: 2em;
 }
 
 .instructions {
-	font-size: 3em;
+	font-size: 2em;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -29,8 +29,8 @@ h3 {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	margin: 10px;
-	padding: 5px;
+	margin: 5px;
+	padding: 2px;
 }
 
 .guessbox {
@@ -39,7 +39,7 @@ h3 {
 	border-style: solid;
 	border-width: 5px;
 	border-color: #444;
-	padding: 10px 30px;
+	padding: 5px 25px;
 	margin: 5px;
 }
 
@@ -48,16 +48,16 @@ h3 {
 }
 
 .row {
-	margin: 40px;
+	margin: 30px;
 	align: center;
 }
 
 .key {
 	color: var(--text);
 	font-size: 5em;
-	border-radius: 8px;
+	border-radius: 5px;
 	background: var(--unguessed);
-	padding: 10px 15px;
+	padding: 5px 10px;
 }
 
 .clicked {
@@ -69,7 +69,8 @@ h3 {
 }
 
 .key-big {
-	font-size: 2em;
+	font-size: 1.5em;
+	padding: 5px 30px;
 }
 
 @keyframes flipAnimation {
