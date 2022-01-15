@@ -22,18 +22,6 @@ function preload() {
 
 function setup()
 {
-	if (document.location.hash != "#presentation")
-		return;
-
-/*
-html, body {
-	margin: 0;
-	padding: 0;
-	background: #000;
-	color: #222;
-	overflow: hidden;
-}
-*/
 	// we're making this happen...
 	in_charge = 1;
 

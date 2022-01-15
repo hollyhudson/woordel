@@ -64,8 +64,12 @@ sock.on('state', (msg) => {
 	}
 
 	for(let k in msg.keyboard)
+	{
+		const d = document.getElementById(k);
+		d.classList.value = '';
 		for(let c in msg.keyboard[k])
-			document.getElementById(k).classList.add(msg.keyboard[k][c]);
+			d.classList.add(msg.keyboard[k][c]);
+	}
 
 	guess_row = msg.guess[0];
 	guess_col = msg.guess[1];
@@ -160,15 +164,15 @@ function receive_letter(row,col,key)
 function place_letter(key,e) {
 	console.log(key, e);
 
-	// if this is a local event, broadcast it
-	if (e != null)
-		sock.emit('keypress', [guess_row, guess_col, key]);
-
 	if (key == 'Escape')
 	{
 		reset_all();
 		return;
 	}
+
+	// if this is a local event, broadcast it
+	if (e != null)
+		sock.emit('keypress', [guess_row, guess_col, key]);
 
 	if (key == 'Delete' || key == 'Backspace')
 	{

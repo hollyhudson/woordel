@@ -13,41 +13,30 @@
 		crossorigin="anonymous"
 	></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.1/math.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/osresearch/p5.projection@0.2.1/library/p5.projection.js"></script>
+<style>
+html, body {
+	margin: 0;
+	padding: 0;
+	background: #000;
+	color: #222;
+	overflow: hidden;
+}
+</style>
 </head>
 
 <body>
+<div id="display"></div>
 <div id="game">
-	<div class="instructions">
-		<div class="flex-container-col">
-			<h2>Woordel</h2>
-			<p>In het Nederlands!</p>
-			<ul>
-				<li>ij is 2 letters</li>
-				<li>geen spaties</li>
-				<li>geen apostroffen</li>
-				<li>geen accenten</li>
-			</ul>
-		</div>	
-		<div class="flex-container-col">
-			<h2>Woordel</h2>
-			<p>It's in Dutch!</p>
-			<ul>
-				<li>ij is 2 letters</li>
-				<li>no spaces</li>
-				<li>no apostrophes</li>
-				<li>no accent marks</li>
-			</ul>
-		</div>	
-	</div>
-	<!-- guess boxes -->
 	<div align="center" id="rows"></div>
-
-	<!-- keyboard -->
 	<div align='center' id="keyboard"></div>
 </div>
 </body>
 
 <script src="words.js"></script>
 <script src="main.js"></script>
+<script src="presentation.js"></script>
 
 </html>
