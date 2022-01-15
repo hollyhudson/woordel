@@ -1,4 +1,15 @@
 "use strict";
+// contact the server
+//const sock = io.connect(document.location.origin);
+const sock = io.connect("https://paint.v.st/");
+sock.on('message', (msg) => console.log(msg));
+sock.on('connect', () => {
+        // ask for an info dump
+        sock.emit('room', 'woordle');
+        sock.emit('info', sock.id);
+});
+sock.on('keypress', (args) => receive_letter(...args));
+
 
 // get all the keyboard keys and attach click event listeners
 for(let k of document.querySelectorAll('.key'))
@@ -52,8 +63,19 @@ let guess_row = 0;
 let guess_col = 0;
 let selected;
 
+function receive_letter(row,col,key)
+{
+	if (row == guess_row && col == guess_col)
+		place_letter(key, null);
+	console.log("mismatch!");
+}
+
 function place_letter(key,e) {
 	console.log(key, e);
+
+	// if this is a local event, broadcast it
+	if (e != null)
+		sock.emit('keypress', [guess_row, guess_col, key]);
 
 	if (key == 'Delete' || key == 'Backspace')
 	{
