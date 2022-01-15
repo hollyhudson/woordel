@@ -7,86 +7,45 @@
 
 <body>
 	<!-- guess boxes -->
-	<div align=center class="row">
-		<span id="w1b1" class="guessbox">0</span>
-		<span id="w1b2" class="guessbox">0</span>
-		<span id="w1b3" class="guessbox">0</span>
-		<span id="w1b4" class="guessbox">0</span>
-		<span id="w1b5" class="guessbox">0</span>
-	</div>
-	<div align=center class="row">
-		<span id="w2b1" class="guessbox">0</span>
-		<span id="w2b2" class="guessbox">0</span>
-		<span id="w2b3" class="guessbox">0</span>
-		<span id="w2b4" class="guessbox">0</span>
-		<span id="w2b5" class="guessbox">0</span>
-	</div>
-	<div align=center class="row">
-		<span id="w3b1" class="guessbox">0</span>
-		<span id="w3b2" class="guessbox">0</span>
-		<span id="w3b3" class="guessbox">0</span>
-		<span id="w3b4" class="guessbox">0</span>
-		<span id="w3b5" class="guessbox">0</span>
-	</div>
-	<div align=center class="row">
-		<span id="w4b1" class="guessbox">0</span>
-		<span id="w4b2" class="guessbox">0</span>
-		<span id="w4b3" class="guessbox">0</span>
-		<span id="w4b4" class="guessbox">0</span>
-		<span id="w4b5" class="guessbox">0</span>
-	</div>
-	<div align=center class="row">
-		<span id="w1b1" class="guessbox">0</span>
-		<span id="w5b2" class="guessbox">0</span>
-		<span id="w5b3" class="guessbox">0</span>
-		<span id="w5b4" class="guessbox">0</span>
-		<span id="w5b5" class="guessbox">0</span>
-	</div>
-	<div align=center class="row">
-		<span id="w6b1" class="guessbox">0</span>
-		<span id="w6b2" class="guessbox">r</span>
-		<span id="w6b3" class="guessbox">i</span>
-		<span id="w6b4" class="guessbox">W</span>
-		<span id="w6b5" class="guessbox">0</span>
-	</div>
+	<div align="center" id="rows"></div>
 
 	<!-- keyboard -->
 	<div align=center class="keysrow">
-		<span class="key" id="kq">Q</span>	
-		<span class="key" id="kw">W</span>	
-		<span class="key" id="ke">E</span>	
-		<span class="key" id="kr">R</span>	
-		<span class="key" id="kt">T</span>	
-		<span class="key" id="ky">Y</span>	
-		<span class="key" id="ku">U</span>	
-		<span class="key" id="ki">I</span>	
-		<span class="key" id="ko">O</span>	
-		<span class="key" id="kp">P</span>	
+		<span class="key" id="q">Q</span>
+		<span class="key" id="w">W</span>
+		<span class="key" id="e">E</span>
+		<span class="key" id="r">R</span>
+		<span class="key" id="t">T</span>
+		<span class="key" id="y">Y</span>
+		<span class="key" id="u">U</span>
+		<span class="key" id="i">I</span>
+		<span class="key" id="o">O</span>
+		<span class="key" id="p">P</span>
 	</div>
 	<div align=center class="keysrow">
-		<span class="key" id="ka">A</span>	
-		<span class="key" id="ks">S</span>	
-		<span class="key" id="kd">D</span>	
-		<span class="key" id="kf">F</span>	
-		<span class="key" id="kg">G</span>	
-		<span class="key" id="kh">H</span>	
-		<span class="key" id="kj">J</span>	
-		<span class="key" id="kk">K</span>	
-		<span class="key" id="kl">L</span>	
+		<span class="key" id="a">A</span>
+		<span class="key" id="s">S</span>
+		<span class="key" id="d">D</span>
+		<span class="key" id="f">F</span>
+		<span class="key" id="g">G</span>
+		<span class="key" id="h">H</span>
+		<span class="key" id="j">J</span>
+		<span class="key" id="k">K</span>
+		<span class="key" id="l">L</span>
 	</div>
 	<div align=center class="keysrow">
-		<span class="key" id="enter">ENTER</span>	
-		<span class="key" id="kz">Z</span>	
-		<span class="key" id="kx">X</span>	
-		<span class="key" id="kc">C</span>	
-		<span class="key" id="kv">V</span>	
-		<span class="key" id="kb">B</span>	
-		<span class="key" id="kn">N</span>	
-		<span class="key" id="km">M</span>	
-		<span class="key" id="enter">DELETE</span>	
+		<span class="key key-big" id="enter">ENTER</span>
+		<span class="key" id="z">Z</span>
+		<span class="key" id="x">X</span>
+		<span class="key" id="c">C</span>
+		<span class="key" id="v">V</span>
+		<span class="key" id="b">B</span>
+		<span class="key" id="n">N</span>
+		<span class="key" id="m">M</span>
+		<span class="key key-big" id="delete">DELETE</span>
 	</div>
 </body>
 
-
+<script src="main.js"></script>
 
 </html>

@@ -13,8 +13,13 @@ body {
 	margin: 2px;
 }
 
+.visible {
+	color: white;
+}
+
 .row {
 	margin: 30px;
+	align: center;
 }
 
 .key {
@@ -25,10 +30,14 @@ body {
 	padding: 8px 10px;
 }
 
+.clicked {
+	background: yellow;
+}
+
 .keysrow {
 	margin: 25px;
 }
 
-#enter {
+.key-big {
 	font-size: 1.2em;
 }
