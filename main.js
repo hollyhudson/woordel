@@ -4,9 +4,39 @@
 for(let k of document.querySelectorAll('.key'))
 	k.addEventListener('click', (e) => place_letter(k,e))
 
+let word = "frank";
+
+function validate(word, guesses)
+{
+	let fail = 0;
+
+	for(let i = 0 ; i < 5 ; i++)
+	{
+		const g = guesses[i];
+		const c = g.innerText;
+		console.log('checking', i, c);
+		if (word[i] == c)
+		{
+			// sucess!
+			g.classList.add('correct-location');
+			document.getElementById(c).classList.add('correct-location');
+		} else
+		if (word.includes(c))
+		{
+			// partial success!
+			g.classList.add('correct-letter');
+			document.getElementById(c).classList.add('correct-location');
+			fail = 1;
+		}
+	}
+
+	return !fail;
+}
+
 const rows = [];
 let guess_row = 0;
 let guess_col = 0;
+
 
 function place_letter(k,e) {
 	const key = k.id;
@@ -28,6 +58,11 @@ function place_letter(k,e) {
 		// todo: actually check it
 		if (guess_row == 6)
 			return;
+		if (validate(word, rows[guess_row]))
+		{
+			console.log('success!');
+		}
+			
 		guess_col = 0;
 		guess_row++;
 		return;
