@@ -14,39 +14,39 @@ body {
 	margin: 0 0 0;
 }
 
-h3 {
+.titles {
 	font-size: 2em;
 	margin: 0 0 0;
 }
 
 ul, p {
 	margin: 0 0 0;
+	padding: 0 0 0 0;
 }
 
 .instructions {
-	font-size: 2em;
+	font-size: 1.8em;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-around;
 }
 
+
 .flex-container-col {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	margin: 0px;
-	padding: 0px;
 }
 
 .guessbox {
 	color: var(--background);
-	font-size: 8em;
+	font-size: 6em;
 	border-style: solid;
 	border-width: 5px;
 	border-color: #444;
-	padding: 5px 25px;
-	margin: 5px;
+	padding: 3px 20px;
+	margin: 4px;
 }
 
 .visible {
@@ -60,10 +60,11 @@ ul, p {
 
 .key {
 	color: var(--text);
-	font-size: 5em;
+	font-size: 3em;
 	border-radius: 5px;
 	background: var(--unguessed);
-	padding: 5px 10px;
+	padding: 8px 15px;
+	margin: 6px;
 }
 
 .clicked {
@@ -77,7 +78,7 @@ ul, p {
 .key-big {
 	font-size: 2em;
 	/* top right bottom left */
-	padding: 40px 20px 18px 20px;
+	padding: 18px 15px 12px 15px;
 }
 
 @keyframes fadeInAnimation {
