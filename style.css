@@ -52,12 +52,31 @@ body {
 	font-size: 1.2em;
 }
 
+@keyframes flipAnimation {
+	from { background: #000; }
+}
+
 .wrong {
 	background: var(--wrong);
+	animation: flipAnimation 1s;
 }
 .correct-letter {
 	background: var(--yellow);
+	animation: flipAnimation 1s;
 }
 .correct-location {
 	background: var(--green);
+	animation: flipAnimation 1s;
+}
+
+@keyframes cycleAnimation {
+  0%   { background:#888; }
+  20%  { background:#000; }
+  40%  { background:#888; }
+  60%  { background:#000; }
+  80%  { background:#000; }
+}
+.selected {
+	background: #888;
+	animation: cycleAnimation 2s infinite;
 }

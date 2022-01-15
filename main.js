@@ -40,7 +40,7 @@ function validate(word, guesses)
 const rows = [];
 let guess_row = 0;
 let guess_col = 0;
-
+let selected;
 
 function place_letter(key,e) {
 	console.log(key, e);
@@ -50,8 +50,13 @@ function place_letter(key,e) {
 		if (guess_col == 0)
 			return;
 
-		guess_col--;
-		rows[guess_row][guess_col].classList.remove('visible');
+		if (selected)
+			selected.classList.remove('selected');
+
+		selected = rows[guess_row][--guess_col];
+		selected.classList.remove('visible');
+		selected.classList.add('selected');
+		selected.innerHTML = '&nbsp;';
 		return;
 	}
 
@@ -65,9 +70,16 @@ function place_letter(key,e) {
 		{
 			console.log('success!');
 		}
+
+		if (selected)
+			selected.classList.remove('selected');
 			
 		guess_col = 0;
 		guess_row++;
+
+		selected = rows[guess_row][guess_col];
+		if (selected)
+			selected.classList.add('selected');
 		return;
 	}
 
@@ -82,9 +94,14 @@ function place_letter(key,e) {
 		return;
 	}
 
-	const sq = rows[guess_row][guess_col++];
-	sq.innerText = key;
-	sq.classList.add('visible');
+	console.log(selected);
+	selected.innerText = key;
+	selected.classList.add('visible');
+	selected.classList.remove('selected');
+	
+	selected = rows[guess_row][++guess_col];
+	if (selected)
+		selected.classList.add('selected');
 }
 
 // create the guess rows
@@ -101,7 +118,7 @@ for(let i = 0 ; i < 6 ; i++)
 		const e = document.createElement('span');
 		e.classList.add('guessbox');
 		e.id = i + "," + j;
-		e.innerText = '0';
+		e.innerHTML = '&nbsp;';
 		row.appendChild(e);
 		rows[i].push(e);
 	}
@@ -109,3 +126,5 @@ for(let i = 0 ; i < 6 ; i++)
 	rows_div.appendChild(row);
 }
 
+selected = rows[0][0];
+selected.classList.add('selected');
