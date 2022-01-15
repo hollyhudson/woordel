@@ -69,8 +69,9 @@ h3 {
 }
 
 .key-big {
-	font-size: 1.5em;
-	padding: 5px 30px;
+	font-size: 2em;
+	/* top right bottom left */
+	padding: 40px 20px 18px 20px;
 }
 
 @keyframes flipAnimation {
