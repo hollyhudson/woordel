@@ -13,14 +13,34 @@ body {
 	font-family: monospace;
 }
 
+h3 {
+	font-size: 3em;
+}
+
+.instructions {
+	font-size: 3em;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+.flex-container-col {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	margin: 10px;
+	padding: 5px;
+}
+
 .guessbox {
 	color: var(--background);
-	font-size: 5em;
+	font-size: 8em;
 	border-style: solid;
 	border-width: 5px;
 	border-color: #444;
-	padding: 5px 20px;
-	margin: 2px;
+	padding: 10px 30px;
+	margin: 5px;
 }
 
 .visible {
@@ -28,16 +48,16 @@ body {
 }
 
 .row {
-	margin: 30px;
+	margin: 40px;
 	align: center;
 }
 
 .key {
 	color: var(--text);
-	font-size: 1.5em;
-	border-radius: 5px;
+	font-size: 5em;
+	border-radius: 8px;
 	background: var(--unguessed);
-	padding: 8px 10px;
+	padding: 10px 15px;
 }
 
 .clicked {
@@ -49,7 +69,7 @@ body {
 }
 
 .key-big {
-	font-size: 1.2em;
+	font-size: 2em;
 }
 
 @keyframes flipAnimation {
