@@ -13,9 +13,14 @@
 		crossorigin="anonymous"
 	></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.1/math.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/osresearch/p5.projection@0.2.1/library/p5.projection.js"></script>
 </head>
 
 <body>
+<div id="display"></div>
+<div id="game">
 	<div class="instructions">
 		<div class="flex-container-col">
 			<h2>Woordel</h2>
@@ -42,43 +47,12 @@
 	<div align="center" id="rows"></div>
 
 	<!-- keyboard -->
-	<div align=center class="keysrow">
-		<span class="key" id="q">Q</span>
-		<span class="key" id="w">W</span>
-		<span class="key" id="e">E</span>
-		<span class="key" id="r">R</span>
-		<span class="key" id="t">T</span>
-		<span class="key" id="y">Y</span>
-		<span class="key" id="u">U</span>
-		<span class="key" id="i">I</span>
-		<span class="key" id="o">O</span>
-		<span class="key" id="p">P</span>
-	</div>
-	<div align=center class="keysrow">
-		<span class="key" id="a">A</span>
-		<span class="key" id="s">S</span>
-		<span class="key" id="d">D</span>
-		<span class="key" id="f">F</span>
-		<span class="key" id="g">G</span>
-		<span class="key" id="h">H</span>
-		<span class="key" id="j">J</span>
-		<span class="key" id="k">K</span>
-		<span class="key" id="l">L</span>
-	</div>
-	<div align=center class="keysrow">
-		<span class="key key-big" id="Enter">&#9166;</span>
-		<span class="key" id="z">Z</span>
-		<span class="key" id="x">X</span>
-		<span class="key" id="c">C</span>
-		<span class="key" id="v">V</span>
-		<span class="key" id="b">B</span>
-		<span class="key" id="n">N</span>
-		<span class="key" id="m">M</span>
-		<span class="key key-big" id="Delete">&#9003;</span>
-	</div>
+	<div align='center' id="keyboard"></div>
+</div>
 </body>
 
 <script src="words.js"></script>
 <script src="main.js"></script>
+<script src="presentation.js"></script>
 
 </html>

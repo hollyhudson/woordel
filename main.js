@@ -15,13 +15,6 @@ sock.on('connect', () => {
 });
 sock.on('keypress', (args) => receive_letter(...args));
 
-
-// get all the keyboard keys and attach click event listeners
-for(let k of document.querySelectorAll('.key'))
-	k.addEventListener('click', (e) => place_letter(k.id,e))
-// also bind to the keyboard event
-document.addEventListener('keydown', (e) => place_letter(e.key,e))
-
 let word = "frank";
 let words = {};
 for(let w of wordlist)
@@ -46,10 +39,11 @@ sock.on('info', (sockid) => {
 	if (!in_charge)
 		return;
 
-	let msg = serialize;
+	let msg = serialize();
 	msg.dest = sockid;
 	msg.topic = 'state';
 
+	console.log(sockid, msg);
 	sock.emit('to', msg);
 });
 
@@ -63,6 +57,7 @@ sock.on('state', (msg) => {
 			const g = msg.guesses[i][j];
 			const r = rows[i][j];
 			r.innerText = g[0];
+			r.classList.value = '';
 			for(let c in g[1])
 				r.classList.add(g[1][c]);
 		}
@@ -267,5 +262,36 @@ for(let i = 0 ; i < max_guesses ; i++)
 	rows_div.appendChild(row);
 }
 
+// create the keyboard
+const key_div = document.getElementById('keyboard');
+const keys = [
+	["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+	["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+	["Enter:&#9166;", "z", "x", "c", "v", "b", "n", "m", "Delete:&#9003;" ],
+];
+for(let row of keys)
+{
+	const r = document.createElement('div');
+	r.classList.add('keysrow');
+	for(let key of row)
+	{
+		const k = document.createElement('span');
+		const v = key.split(":");
+		k.classList.add("key");
+		k.id = v[0];
+		k.innerHTML = v.length == 1 ? v[0].toUpperCase() : v[1];
+		if (k.id.length > 1)
+			k.classList.add("key-big");
+
+		k.addEventListener('click', (e) => place_letter(k.id,e))
+		r.appendChild(k);
+	}
+	key_div.appendChild(r);
+}
+
 selected = rows[0][0];
 selected.classList.add('selected');
+
+// also bind to the keyboard event
+document.addEventListener('keydown', (e) => place_letter(e.key,e))
+
