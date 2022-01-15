@@ -23,14 +23,6 @@ body {
 	margin: 2px;
 }
 
-.correct-location {
-	background: var(--green);
-}
-
-.correct-letter {
-	background: var(--yellow);
-}
-
 .visible {
 	color: var(--text);
 }
