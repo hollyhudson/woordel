@@ -7,6 +7,16 @@ for(let k of document.querySelectorAll('.key'))
 document.addEventListener('keydown', (e) => place_letter(e.key,e))
 
 let word = "frank";
+let words = {};
+for(let w of wordlist)
+	words[w] = 1;
+
+function check_word(guesses)
+{
+	// build the guessed word
+	const guess = guesses.map((g) => g.innerText).join('');
+	return guess in words;
+}
 
 function validate(word, guesses)
 {
@@ -66,6 +76,17 @@ function place_letter(key,e) {
 			return;
 		if (guess_col != 5)
 			return;
+		if (!check_word(rows[guess_row]))
+		{
+			console.log("invalid word!");
+			for(let g of rows[guess_row])
+			{
+				g.classList.add('badword');
+				window.setTimeout(() => g.classList.remove('badword'), 2000);
+			}
+			return;
+		}
+
 		if (validate(word, rows[guess_row]))
 		{
 			console.log('success!');
