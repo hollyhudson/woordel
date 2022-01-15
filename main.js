@@ -1,7 +1,9 @@
 "use strict";
 // contact the server
 //const sock = io.connect(document.location.origin);
+let in_charge = 0;
 const sock = io.connect("https://paint.v.st/");
+
 sock.on('message', (msg) => console.log(msg));
 sock.on('connect', () => {
         // ask for an info dump
@@ -21,6 +23,54 @@ let word = "frank";
 let words = {};
 for(let w of wordlist)
 	words[w] = 1;
+
+sock.on('info', (sockid) => {
+	console.log(sockid);
+	if (!in_charge)
+		return;
+
+	let keyboard = {};
+	for(let k of "abcdefghijklmnopqrstuvwxyz")
+		keyboard[k] = document.getElementById(k).classList
+
+	sock.emit('to', {
+		dest: sockid,
+		topic: 'state',
+		guesses: rows.map((row) => row.map((g) => [ g.innerText, g.classList ])),
+		keyboard: keyboard,
+		guess: [ guess_row, guess_col ],
+	});
+});
+
+sock.on('state', (msg) => {
+	const guesses = msg.guesses;
+	console.log(msg);
+	for(let i = 0 ; i < 6 ; i++)
+	{
+		for(let j = 0 ; j < 5 ; j++)
+		{
+			const g = msg.guesses[i][j];
+			const r = rows[i][j];
+			r.innerText = g[0];
+			for(let c in g[1])
+				r.classList.add(g[1][c]);
+		}
+	}
+
+	for(let k in msg.keyboard)
+		for(let c in msg.keyboard[k])
+			document.getElementById(k).classList.add(msg.keyboard[k][c]);
+
+	guess_row = msg.guess[0];
+	guess_col = msg.guess[1];
+
+	if (selected)
+		selected.classList.remove('selected');
+	selected = rows[guess_row][guess_col];
+	if (selected)
+		selected.classList.add('selected');
+});
+
 
 function check_word(guesses)
 {
@@ -67,7 +117,8 @@ function receive_letter(row,col,key)
 {
 	if (row == guess_row && col == guess_col)
 		place_letter(key, null);
-	console.log("mismatch!");
+	else
+		console.log("mismatch!");
 }
 
 function place_letter(key,e) {
