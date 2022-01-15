@@ -1,8 +1,10 @@
-// get all the keyboard keys and attach click event listeners
 "use strict";
 
+// get all the keyboard keys and attach click event listeners
 for(let k of document.querySelectorAll('.key'))
-	k.addEventListener('click', (e) => place_letter(k,e))
+	k.addEventListener('click', (e) => place_letter(k.id,e))
+// also bind to the keyboard event
+document.addEventListener('keydown', (e) => place_letter(e.key,e))
 
 let word = "frank";
 
@@ -25,8 +27,10 @@ function validate(word, guesses)
 		{
 			// partial success!
 			g.classList.add('correct-letter');
-			document.getElementById(c).classList.add('correct-location');
+			document.getElementById(c).classList.add('correct-letter');
 			fail = 1;
+		} else {
+			document.getElementById(c).classList.add('wrong');
 		}
 	}
 
@@ -38,12 +42,10 @@ let guess_row = 0;
 let guess_col = 0;
 
 
-function place_letter(k,e) {
-	const key = k.id;
-	console.log(key);
-	e.preventDefault();
+function place_letter(key,e) {
+	console.log(key, e);
 
-	if (key == 'delete')
+	if (key == 'Delete' || key == 'Backspace')
 	{
 		if (guess_col == 0)
 			return;
@@ -53,10 +55,11 @@ function place_letter(k,e) {
 		return;
 	}
 
-	if (key == 'enter')
+	if (key == 'Enter')
 	{
-		// todo: actually check it
 		if (guess_row == 6)
+			return;
+		if (guess_col != 5)
 			return;
 		if (validate(word, rows[guess_row]))
 		{
@@ -67,6 +70,11 @@ function place_letter(k,e) {
 		guess_row++;
 		return;
 	}
+
+	if (key.length > 1)
+		return;
+
+	//e.preventDefault();
 
 	if(guess_col == 5)
 	{
