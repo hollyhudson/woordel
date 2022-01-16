@@ -215,6 +215,10 @@ function place_letter(key,e) {
 		return;
 	}
 
+	// if there isn't a matching keyboard element, discard this
+	if (!document.getElementById(key))
+		return;
+
 	// if this is a local event, broadcast it
 	if (e != null)
 		sock.emit('keypress', [guess_row, guess_col, key]);
@@ -267,6 +271,9 @@ function place_letter(key,e) {
 			
 		guess_col = 0;
 		guess_row++;
+
+		if (guess_row == max_guesses)
+			return;
 
 		selected = rows[guess_row][guess_col];
 		if (selected)
