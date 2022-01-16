@@ -189,13 +189,17 @@ function draw_game()
 		fill(0, 0, 0, background_opacity);
 		rect(0, 0, 1920, 1080);
 
+		const style = window.getComputedStyle(failure_row[0]);
+		const bg = style.backgroundColor;
+
 		for(let j = 0 ; j < word_length; j++)
 		{
 			push();
 			translate(x_coords[j+2], y_coords[2] + rect_h/2);
 			strokeWeight(10);
 			stroke(30);
-			fill(100,0,0);
+
+			fill(bg);
 
 			rect(10, 10, rect_w-20, rect_h-20);
 
