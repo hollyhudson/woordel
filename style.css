@@ -3,6 +3,7 @@
 	--text: white;
 	--yellow: #fcb500;
 	--green: #8db008;
+	--red : #800000;
 	--wrong: black;
 	--unguessed: #777;
 }
@@ -49,6 +50,12 @@ ul, p {
 	margin: 4px;
 }
 
+.failure {
+	animation: fadeInAnimation 1s infinite alternate;
+	background: var(--red);
+	color: var(--text);
+}
+
 .visible {
 	color: var(--text);
 }
@@ -85,7 +92,7 @@ ul, p {
 	from { background: #000; }
 }
 @keyframes badword-animation {
-	from { background: #800; }
+	from { background: var(--red); }
 }
 @keyframes success-animation {
 	0%  { background: #008; }
