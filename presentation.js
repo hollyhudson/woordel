@@ -73,7 +73,7 @@ function attract_mode()
 	if (success)
 	{
 		if (mode != 0)
-			console.log("SUCCESS! Exiting attract mode for a while");
+			console.log("End of game! Exiting attract mode for a while");
 		mode = 0;
 		type_timeout = long_type_timeout;
 		return;
@@ -134,6 +134,8 @@ function attract_mode()
 	last_synthetic = now;
 }
 
+let background_opacity = 0;
+
 function draw_game()
 {
 	attract_mode();
@@ -168,6 +170,37 @@ function draw_game()
 			fill(255);
 
 			text(r.innerText, rect_w/2, rect_h/3);
+
+			pop();
+		}
+	}
+
+
+	if (success == 0)
+	{
+		// still playing!
+		background_opacity = 0;
+	} else
+	if (success < 0)
+	{
+		background_opacity += 0.5;
+		fill(0, 0, 0, background_opacity);
+		rect(0, 0, 1920, 1080);
+
+		for(let j = 0 ; j < word_length; j++)
+		{
+			push();
+			translate(x_coords[j+2], y_coords[2] + rect_h/2);
+			strokeWeight(10);
+			stroke(30);
+			fill(100,0,0);
+
+			rect(10, 10, rect_w-20, rect_h-20);
+
+			stroke(255);
+			fill(255);
+
+			text(word[j], rect_w/2, rect_h/3);
 
 			pop();
 		}

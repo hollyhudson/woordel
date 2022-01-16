@@ -5,6 +5,7 @@ let in_charge = 0;
 const word_length = 5;
 const max_guesses = 6;
 const success_timeout = 30; // seconds to leave a success on screen
+const failure_timeout = 10; // seconds to leave a failure on screen
 
 const sock = io.connect("https://paint.v.st/");
 
@@ -289,6 +290,9 @@ function place_letter(key,e) {
 		if (guess_row == max_guesses)
 		{
 			console.log("YOU FAILED", word);
+			success = -1;
+			if (in_charge)
+				window.setTimeout(reset_all, failure_timeout*1000);
 			return;
 		}
 
