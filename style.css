@@ -92,7 +92,7 @@ ul, p {
 	20%  { background: var(--green); }
 	40%  { background: #fff; }
 	60%  { background: var(--green); }
-	80%  { background: #800; }
+	80%  { background: #808; }
 	100% { background: #008; }
 }
 

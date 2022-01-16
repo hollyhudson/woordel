@@ -149,7 +149,7 @@ function validate(word, guesses)
 	{
 		const g = guesses[i];
 		const c = g.innerText;
-		console.log('checking', i, c);
+		//console.log('checking', i, c);
 		if (word[i] == c)
 		{
 			// sucess!
@@ -175,21 +175,26 @@ function validate(word, guesses)
 	// filter possible list to remove banned letters and
 	// only match possible words, using all the info from
 	// previous guesses
-	const banned_reg = impossible_letters.map((c) => "[^" + c + banned_letters + "]").join('')
-	console.log(banned_reg);
-	const banned = new RegExp("^" + banned_reg + "$");
-	const possible = new RegExp("^" + possible_word + "$");
-	possible_words = possible_words.filter((w) => {
-		if (!banned.exec(w))
-			return false;
-		if (!possible.exec(w))
-			return false;
-		// make sure all known letters are used
-		for(let c of possible_letters)
-			if (!w.includes(c))
+	if (in_charge)
+	{
+		const banned_reg = impossible_letters.map((c) => "[^" + c + banned_letters + "]").join('')
+		//console.log(banned_reg);
+		const banned = new RegExp("^" + banned_reg + "$");
+		const possible = new RegExp("^" + possible_word + "$");
+		possible_words = possible_words.filter((w) => {
+			if (!banned.exec(w))
 				return false;
-		return true;
-	})
+			if (!possible.exec(w))
+				return false;
+			// make sure all known letters are used
+			for(let c of possible_letters)
+				if (!w.includes(c))
+					return false;
+			return true;
+		})
+
+		console.log(word, possible_words);
+	}
 
 	return !fail;
 }
@@ -214,7 +219,7 @@ function place_letter(key,e) {
 	if (e != 'synthetic')
 		last_time = new Date().getTime();
 
-	console.log(key, e);
+	//console.log(key, e);
 
 	if (key == 'Escape')
 	{
@@ -308,7 +313,6 @@ function place_letter(key,e) {
 	if (!selected)
 		return;
 
-	console.log(selected);
 	selected.innerText = key;
 	selected.classList.add('visible');
 	selected.classList.remove('selected');
