@@ -12,6 +12,8 @@ const y_coords = [
 	745 + 336/2 + 15,
 ];
 
+let type_timeout = 10; // seconds
+let type_speed = 1; // char per second
 let mat;
 let font;
 let pg;
@@ -79,6 +81,26 @@ function draw()
 {
 	if (!in_charge)
 		return;
+
+	// if no one has typed anything, try a word from the possible list
+	const now = new Date().getTime();
+	if (now - last_time > type_timeout*1000)
+	{
+		// todo: if the current row has a partial guess, try to complete it
+		const new_guess = possible_words[Math.floor(Math.random()*possible_words.length)];
+		let i = 0;
+		let f = () => {
+			if (i == word_length)
+			{
+				place_letter("Enter", 'synthetic');
+				return;
+			}
+			place_letter(new_guess[i++], 'synthetic');
+			window.setTimeout(f, type_speed*1000);
+		};
+
+		f();
+	}
 
 	const orig = background(0);
 	const orig_renderer = orig._renderer;
