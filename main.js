@@ -22,6 +22,7 @@ for(let w of wordlist)
 
 let possible_words = [];
 let possible_word = '.....';
+let impossible_letters = ['','','','',''];
 let possible_letters = '';
 let banned_letters = '';
 
@@ -118,6 +119,7 @@ function reset_all()
 	// update the possible word list to be a copy
 	possible_words = wordlist.slice();
 	possible_word = '.....';
+	impossible_letters = ['','','','',''];
 	possible_letters = '';
 	banned_letters = '';
 
@@ -125,6 +127,7 @@ function reset_all()
 	console.log('sending', msg);
 	sock.emit('state', msg);
 }
+
 
 function check_word(guesses)
 {
@@ -155,6 +158,7 @@ function validate(word, guesses)
 			fail = 1;
 			g.classList.add('correct-letter');
 			possible_letters += c;
+			impossible_letters[i] += c;
 			document.getElementById(c).classList.add('correct-letter');
 		} else {
 			fail = 1;
@@ -164,11 +168,14 @@ function validate(word, guesses)
 	}
 
 	// filter possible list to remove banned letters and
-	// only match possible words
-	const banned = new RegExp("["+banned_letters+"]");
+	// only match possible words, using all the info from
+	// previous guesses
+	const banned_reg = impossible_letters.map((c) => "[^" + c + banned_letters + "]").join('')
+	console.log(banned_reg);
+	const banned = new RegExp("^" + banned_reg + "$");
 	const possible = new RegExp("^" + possible_word + "$");
 	possible_words = possible_words.filter((w) => {
-		if (banned.exec(w))
+		if (!banned.exec(w))
 			return false;
 		if (!possible.exec(w))
 			return false;
@@ -187,6 +194,7 @@ let guess_row = 0;
 let guess_col = 0;
 let selected;
 let success = 0;
+let last_time = 0;
 
 function receive_letter(row,col,key)
 {
@@ -197,6 +205,8 @@ function receive_letter(row,col,key)
 }
 
 function place_letter(key,e) {
+	last_time = new Date().getTime();
+
 	console.log(key, e);
 
 	if (key == 'Escape')
@@ -274,6 +284,10 @@ function place_letter(key,e) {
 		// too many!
 		return;
 	}
+
+	// nothing is actually ready to receive a character
+	if (!selected)
+		return;
 
 	console.log(selected);
 	selected.innerText = key;
