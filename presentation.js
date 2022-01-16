@@ -222,7 +222,7 @@ function draw_game()
 	fill(255);
 	textSize(30);
 	rotate(-60 * PI/180);
-	text("art.v.st/woordle/", 0, 0);
+	text("https://v.st/woord/", 0, 0);
 	pop();
 
 
@@ -235,7 +235,7 @@ function draw_game()
 	textSize(48);
 	
 	//text("Join\nthe\ngame!", 10, -400);
-	text("Doe\nmee!", 10, -400);
+	text("speel\nmee!", 10, -400);
 
 	strokeWeight(10);
 	stroke(255,0,0);
