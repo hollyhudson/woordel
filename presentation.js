@@ -12,10 +12,11 @@ const y_coords = [
 	745 + 336/2 + 15,
 ];
 
-let long_type_timeout = 60; // seconds after they have typed anything
+let long_type_timeout = 60; // seconds after they have typed anything; 60 for test, 120 for real
 let short_type_timeout = 15; // seconds after attract mode has typed
 let type_timeout = short_type_timeout;
-let type_speed = 1; // char per second
+let default_type_speed = 1; // char per second
+let type_speed = default_type_speed;
 let mat;
 let font;
 let pg;
@@ -37,6 +38,7 @@ function setup()
 	//document.getElementById('game').style.display = 'none';
 
  	mat = new ProjectionMatrix(null,null,"lites2021");
+	mat.edit = 1;
 	const c = createCanvas(windowWidth, windowHeight, WEBGL);
 	c.parent("display");
 
@@ -59,7 +61,8 @@ function attract_mode()
 	if (last_time != last_real_time)
 	{
 		// they have typed something! immediately exit attract mdoe
-		console.log("EXITING ATTRACT MODE");
+		if (mode != 0)
+			console.log("EXITING ATTRACT MODE");
 		mode = 0;
 		last_real_time = last_time;
 		type_timeout = long_type_timeout;
@@ -93,10 +96,11 @@ function attract_mode()
 		}
 
 		const possible = possible_words.filter((w) => w.startsWith(partial));
-		console.log("possible extentsions", partial, possible);
+		//console.log("possible extensions", partial, possible);
 		if (possible.length > 0)
 		{
 			let new_guess = possible[Math.floor(Math.random()*possible.length)];
+			console.log("guessing", new_guess);
 			new_guess = new_guess.substring(guess_col);
 			new_guesses = [];
 			for(let c of new_guess)
@@ -104,10 +108,14 @@ function attract_mode()
 			new_guesses.push("Enter");
 		}
 
+		// slow down the typing if this matches
+		if (possible.length == 1)
+			type_speed *= 2;
+
 		mode = 1;
 	}
 
-	// type in the guesses and the typing speed
+	// type in the guesses at the typing speed
 	if (now - last_synthetic < (type_speed + Math.random()/2) * 1000)
 		return;
 
@@ -117,6 +125,7 @@ function attract_mode()
 		mode = 0;
 		last_time = last_real_time = now;
 		type_timeout = short_type_timeout;
+		type_speed = default_type_speed;
 		return;
 	}
 
@@ -132,7 +141,8 @@ function draw_game()
 	background(0);
 
 	textFont(font);
-	textSize(rect_h * 0.8);
+	textStyle(BOLD);
+	textSize(rect_h * 0.9);
 	textAlign(CENTER, CENTER);
 
 	for(let i = 0 ; i < max_guesses ; i++)
@@ -144,14 +154,16 @@ function draw_game()
 			translate(x_coords[j+2], y_coords[i]);
 
 			stroke(80);
+			strokeWeight(10);
 
 			const style = window.getComputedStyle(r);
 			const bg = style.backgroundColor;
 
 			fill(bg);
-			rect(0, 0, rect_w, rect_h);
+			rect(10, 10, rect_w-20, rect_h-20);
 
-			//noStroke();
+			// fake bold font
+			strokeWeight(5);
 			stroke(255);
 			fill(255);
 
