@@ -20,6 +20,10 @@ let words = {};
 for(let w of wordlist)
 	words[w] = 1;
 
+let possible_words = [];
+let possible_word = '.....';
+let possible_letters = '';
+let banned_letters = '';
 
 function serialize()
 {
@@ -90,11 +94,7 @@ function reset_all()
 	for(let g of document.querySelectorAll('.guessbox'))
 	{
 		g.innerHTML = '&nbsp;';
-		g.classList.remove('wrong');
-		g.classList.remove('badword');
-		g.classList.remove('selected');
-		g.classList.remove('correct-letter');
-		g.classList.remove('correct-location');
+		g.classList.value = 'guessbox';
 	}
 
 	for(let k of document.querySelectorAll('.key'))
@@ -112,8 +112,14 @@ function reset_all()
 	selected.classList.add('selected');
 
 	// pick a new word!
-	word = wordlist[math.randomInt(wordlist.length)];
+	word = wordlist[Math.floor(Math.random()*wordlist.length)];
 	console.log("NEW WORD", word);
+
+	// update the possible word list to be a copy
+	possible_words = wordlist.slice();
+	possible_word = '.....';
+	possible_letters = '';
+	banned_letters = '';
 
 	const msg = serialize();
 	console.log('sending', msg);
@@ -140,18 +146,38 @@ function validate(word, guesses)
 		{
 			// sucess!
 			g.classList.add('correct-location');
+			possible_word = possible_word.substring(0,i) + c + possible_word.substring(i+1);
 			document.getElementById(c).classList.add('correct-location');
 		} else
 		if (word.includes(c))
 		{
-			// partial success!
-			g.classList.add('correct-letter');
-			document.getElementById(c).classList.add('correct-letter');
+			// partial success! but still a failure
 			fail = 1;
+			g.classList.add('correct-letter');
+			possible_letters += c;
+			document.getElementById(c).classList.add('correct-letter');
 		} else {
+			fail = 1;
+			banned_letters += c;
 			document.getElementById(c).classList.add('wrong');
 		}
 	}
+
+	// filter possible list to remove banned letters and
+	// only match possible words
+	const banned = new RegExp("["+banned_letters+"]");
+	const possible = new RegExp("^" + possible_word + "$");
+	possible_words = possible_words.filter((w) => {
+		if (banned.exec(w))
+			return false;
+		if (!possible.exec(w))
+			return false;
+		// make sure all known letters are used
+		for(let c of possible_letters)
+			if (!w.includes(c))
+				return false;
+		return true;
+	})
 
 	return !fail;
 }
@@ -316,4 +342,7 @@ selected.classList.add('selected');
 
 // also bind to the keyboard event, but don't prevent default
 document.addEventListener('keydown', (e) => place_letter(e.key,e))
+
+// trigger a reset to choose a random word
+reset_all();
 
