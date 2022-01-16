@@ -20,11 +20,13 @@ let type_speed = default_type_speed;
 let mat;
 let font;
 let pg;
+let qr;
 
 let mode = 0;
 
 function preload() {
 	font = loadFont('cutive-mono.ttf');
+	qr = loadImage('qr.png');
 }
 
 function setup()
@@ -38,7 +40,7 @@ function setup()
 	//document.getElementById('game').style.display = 'none';
 
  	mat = new ProjectionMatrix(null,null,"lites2021");
-	mat.edit = 1;
+	mat.load();
 	const c = createCanvas(windowWidth, windowHeight, WEBGL);
 	c.parent("display");
 
@@ -205,6 +207,53 @@ function draw_game()
 			pop();
 		}
 	}
+
+	noStroke();
+	fill(40,0,0);
+	//rect(x_coords[1], y_coords[4], rect_w, rect_h*2);
+
+	push()
+	// center in the second window
+	translate(x_coords[1] + rect_w/2, y_coords[4] + rect_h);
+	fill(255);
+	textSize(30);
+	rotate(-60 * PI/180);
+	text("art.v.st/woordle/", 0, 0);
+	pop();
+
+
+	// draw the qr codes
+	push();
+	translate(rect_w/2, 1080 - rect_h);
+
+	fill(255);
+	noStroke();
+	textSize(48);
+	
+	//text("Join\nthe\ngame!", 10, -400);
+	text("Doe\nmee!", 10, -400);
+
+	strokeWeight(10);
+	stroke(255,0,0);
+
+	line(0, -280, 0, -80);
+	line(+20, -110, 0, -80);
+	line(-20, -110, 0, -80);
+
+	image(qr, - 64, - 64, 128, 128);
+	pop();
+}
+
+function keyPressed()
+{
+	console.log("key", key);
+	if (key == '1')
+		mat.edit ^= 1;
+	if (key == '0')
+	{
+		console.log("MATRIX SAVED");
+		mat.save();
+	}
 }
 
 function draw()
@@ -231,7 +280,10 @@ function draw()
 	orig._renderer = orig_renderer;
 	mat.apply();
 
-	image(pg, 0, 0);
+	push();
+	scale(-1,1);
+	image(pg, -1920, 0);
+	pop();
 
 	if (mat.edit)
 		mat.drawMouse();
