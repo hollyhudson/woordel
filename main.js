@@ -4,6 +4,7 @@
 let in_charge = 0;
 const word_length = 5;
 const max_guesses = 6;
+const success_timeout = 30; // seconds to leave a success on screen
 
 const sock = io.connect("https://paint.v.st/");
 
@@ -56,7 +57,7 @@ sock.on('info', (sockid) => {
 
 sock.on('state', (msg) => {
 	const guesses = msg.guesses;
-	console.log(msg);
+	console.log("received new state", msg);
 	for(let i = 0 ; i < max_guesses ; i++)
 	{
 		for(let j = 0 ; j < word_length ; j++)
@@ -81,6 +82,7 @@ sock.on('state', (msg) => {
 	success = msg.success;
 	guess_row = msg.guess[0];
 	guess_col = msg.guess[1];
+	word = msg.word;
 
 	if (selected)
 		selected.classList.remove('selected');
@@ -123,9 +125,12 @@ function reset_all()
 	possible_letters = '';
 	banned_letters = '';
 
-	const msg = serialize();
-	console.log('sending', msg);
-	sock.emit('state', msg);
+	if (in_charge)
+	{
+		const msg = serialize();
+		console.log('sending', msg);
+		sock.emit('state', msg);
+	}
 }
 
 
@@ -266,7 +271,7 @@ function place_letter(key,e) {
 			guess_col = 0;
 			success = 1;
 			if (in_charge)
-				window.setTimeout(reset_all, 15*1000);
+				window.setTimeout(reset_all, success_timeout*1000);
 			return;
 		}
 
@@ -277,7 +282,10 @@ function place_letter(key,e) {
 		guess_row++;
 
 		if (guess_row == max_guesses)
+		{
+			console.log("YOU FAILED", word);
 			return;
+		}
 
 		selected = rows[guess_row][guess_col];
 		if (selected)
