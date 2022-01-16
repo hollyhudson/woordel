@@ -205,7 +205,9 @@ function receive_letter(row,col,key)
 }
 
 function place_letter(key,e) {
-	last_time = new Date().getTime();
+	// if this is not a synthetic event, record the time
+	if (e != 'synthetic')
+		last_time = new Date().getTime();
 
 	console.log(key, e);
 
@@ -216,7 +218,7 @@ function place_letter(key,e) {
 	}
 
 	// if there isn't a matching keyboard element, discard this
-	if (!document.getElementById(key))
+	if (!document.getElementById(key) && key != "Backspace")
 		return;
 
 	// if this is a local event, broadcast it
@@ -263,6 +265,8 @@ function place_letter(key,e) {
 			guess_row = max_guesses;
 			guess_col = 0;
 			success = 1;
+			if (in_charge)
+				window.setTimeout(reset_all, 15*1000);
 			return;
 		}
 
