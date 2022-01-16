@@ -7,6 +7,86 @@ const max_guesses = 6;
 const success_timeout = 30; // seconds to leave a success on screen
 const failure_timeout = 10; // seconds to leave a failure on screen
 
+// create the guess rows
+const rows = [];
+let failure_row = [];
+let guess_row = 0;
+let guess_col = 0;
+let selected;
+let success = 0;
+let last_time = 0;
+
+const rows_div = document.getElementById('rows');
+for(let i = 0 ; i < max_guesses + 1; i++)
+{
+	const row_div = document.createElement('div');
+	row_div.classList.add('row');
+	row_div.id = 'row-' + i;
+	rows_div.appendChild(row_div);
+
+	const row = []
+	if (i < max_guesses)
+	{
+		rows[i] = row;
+	} else {
+		failure_row = row;
+		row_div.style.display = 'none';
+		row_div.id = 'row-failure';
+	}
+
+	for(let j = 0 ; j < word_length ; j++)
+	{
+		const e = document.createElement('span');
+		e.classList.add('failure');
+		e.classList.add('guessbox');
+		e.id = i + "," + j;
+		e.innerHTML = '&nbsp;';
+
+		//if (i == max_guesses)
+
+		row[j] = e;
+		row_div.appendChild(e);
+	}
+
+}
+
+// create the keyboard
+const key_div = document.getElementById('keyboard');
+
+const keys = [
+	["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+	["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+	["Enter:&#9166;", "z", "x", "c", "v", "b", "n", "m", "Delete:&#9003;" ],
+];
+for(let row of keys)
+{
+	const r = document.createElement('div');
+	r.classList.add('keysrow');
+	for(let key of row)
+	{
+		const k = document.createElement('span');
+		const v = key.split(":");
+		k.classList.add("key");
+		k.id = v[0];
+		k.innerHTML = v.length == 1 ? v[0].toUpperCase() : v[1];
+		if (k.id.length > 1)
+			k.classList.add("key-big");
+
+		k.addEventListener('click', (e) => {
+			e.preventDefault();
+			place_letter(k.id,e);
+		})
+		r.appendChild(k);
+	}
+	key_div.appendChild(r);
+}
+
+selected = rows[0][0];
+selected.classList.add('selected');
+
+// also bind to the keyboard event, but don't prevent default
+document.addEventListener('keydown', (e) => place_letter(e.key,e))
+
 const sock = io.connect("https://paint.v.st/");
 
 sock.on('message', (msg) => console.log(msg));
@@ -15,7 +95,7 @@ sock.on('connect', () => {
         sock.emit('room', 'woordle');
         sock.emit('info', sock.id);
 });
-sock.on('keypress', (args) => receive_letter(...args));
+sock.on('keypress', (src,row,col,key) => receive_letter(src,row,col,key));
 
 let word = "aaien";
 let words = {};
@@ -43,20 +123,19 @@ function serialize()
 	};
 }
 
-sock.on('info', (sockid) => {
-	console.log(sockid);
+function resync(sockid)
+{
 	if (!in_charge)
 		return;
 
 	let msg = serialize();
-	msg.dest = sockid;
-	msg.topic = 'state';
-
 	console.log(sockid, msg);
-	sock.emit('to', msg);
-});
+	sock.emit('to', sockid, 'state', msg);
+}
 
-sock.on('state', (msg) => {
+sock.on('info', resync);
+
+sock.on('state', (src,msg) => {
 	const guesses = msg.guesses;
 	console.log("received new state", msg);
 	for(let i = 0 ; i < max_guesses ; i++)
@@ -75,6 +154,8 @@ sock.on('state', (msg) => {
 	for(let k in msg.keyboard)
 	{
 		const d = document.getElementById(k);
+		if (!d)
+			console.log("ERROR:", k);
 		d.classList.value = '';
 		for(let c in msg.keyboard[k])
 			d.classList.add(msg.keyboard[k][c]);
@@ -85,6 +166,8 @@ sock.on('state', (msg) => {
 	guess_col = msg.guess[1];
 	word = msg.word;
 
+	failure_update();
+
 	if (selected)
 		selected.classList.remove('selected');
 	selected = rows[guess_row][guess_col];
@@ -92,6 +175,20 @@ sock.on('state', (msg) => {
 		selected.classList.add('selected');
 });
 
+
+function failure_update()
+{
+	// restore the failure box
+	const failure_div = document.getElementById('row-failure');
+	if (failure_div)
+		failure_div.style.display = 'none';
+
+	for(let i = 0 ; i < word_length ; i++)
+	{
+		failure_row[i].classList.add('failure');
+		failure_row[i].innerText = word[i];
+	}
+}
 
 function reset_all()
 {
@@ -118,6 +215,8 @@ function reset_all()
 	// pick a new word!
 	word = wordlist[Math.floor(Math.random()*wordlist.length)];
 	console.log("NEW WORD", word);
+
+	failure_update();
 
 	// update the possible word list to be a copy
 	possible_words = wordlist.slice();
@@ -200,19 +299,14 @@ function validate(word, guesses)
 	return !fail;
 }
 
-const rows = [];
-let guess_row = 0;
-let guess_col = 0;
-let selected;
-let success = 0;
-let last_time = 0;
 
-function receive_letter(row,col,key)
+function receive_letter(src,row,col,key)
 {
 	if (row == guess_row && col == guess_col)
 		place_letter(key, null);
 	else
-		console.log("mismatch!");
+	if (in_charge)
+		resync(src);
 }
 
 function place_letter(key,e) {
@@ -234,7 +328,7 @@ function place_letter(key,e) {
 
 	// if this is a local event, broadcast it
 	if (e != null)
-		sock.emit('keypress', [guess_row, guess_col, key]);
+		sock.emit('keypress', guess_row, guess_col, key);
 
 	if (key == 'Delete' || key == 'Backspace')
 	{
@@ -291,6 +385,10 @@ function place_letter(key,e) {
 		{
 			console.log("YOU FAILED", word);
 			success = -1;
+			const failure_div = document.getElementById('row-failure');
+			if (failure_div)
+				failure_div.style.display = null;
+
 			if (in_charge)
 				window.setTimeout(reset_all, failure_timeout*1000);
 			return;
@@ -325,64 +423,6 @@ function place_letter(key,e) {
 	if (selected)
 		selected.classList.add('selected');
 }
-
-// create the guess rows
-const rows_div = document.getElementById('rows');
-for(let i = 0 ; i < max_guesses ; i++)
-{
-	const row = document.createElement('div');
-	row.classList.add('row');
-
-	rows[i] = [];
-
-	for(let j = 0 ; j < word_length ; j++)
-	{
-		const e = document.createElement('span');
-		e.classList.add('guessbox');
-		e.id = i + "," + j;
-		e.innerHTML = '&nbsp;';
-		row.appendChild(e);
-		rows[i].push(e);
-	}
-
-	rows_div.appendChild(row);
-}
-
-// create the keyboard
-const key_div = document.getElementById('keyboard');
-const keys = [
-	["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-	["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-	["Enter:&#9166;", "z", "x", "c", "v", "b", "n", "m", "Delete:&#9003;" ],
-];
-for(let row of keys)
-{
-	const r = document.createElement('div');
-	r.classList.add('keysrow');
-	for(let key of row)
-	{
-		const k = document.createElement('span');
-		const v = key.split(":");
-		k.classList.add("key");
-		k.id = v[0];
-		k.innerHTML = v.length == 1 ? v[0].toUpperCase() : v[1];
-		if (k.id.length > 1)
-			k.classList.add("key-big");
-
-		k.addEventListener('click', (e) => {
-			e.preventDefault();
-			place_letter(k.id,e);
-		})
-		r.appendChild(k);
-	}
-	key_div.appendChild(r);
-}
-
-selected = rows[0][0];
-selected.classList.add('selected');
-
-// also bind to the keyboard event, but don't prevent default
-document.addEventListener('keydown', (e) => place_letter(e.key,e))
 
 // trigger a reset to choose a random word
 reset_all();
