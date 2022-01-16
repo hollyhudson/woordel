@@ -12,11 +12,15 @@ const y_coords = [
 	745 + 336/2 + 15,
 ];
 
-let type_timeout = 10; // seconds
+let long_type_timeout = 60; // seconds after they have typed anything
+let short_type_timeout = 15; // seconds after attract mode has typed
+let type_timeout = short_type_timeout;
 let type_speed = 1; // char per second
 let mat;
 let font;
 let pg;
+
+let mode = 0;
 
 function preload() {
 	font = loadFont('cutive-mono.ttf');
@@ -42,8 +46,89 @@ function setup()
 }
 
 
+let new_guesses = [];
+let last_synthetic = 0;
+let last_real_time = 0;
+
+function attract_mode()
+{
+	const now = new Date().getTime();
+	if (last_time == 0)
+		last_time = last_real_time = now;
+
+	if (last_time != last_real_time)
+	{
+		// they have typed something! immediately exit attract mdoe
+		console.log("EXITING ATTRACT MODE");
+		mode = 0;
+		last_real_time = last_time;
+		type_timeout = long_type_timeout;
+		return;
+	}
+
+	// if we've won, then don't do anything and go back to waiting
+	if (success)
+	{
+		if (mode != 0)
+			console.log("SUCCESS! Exiting attract mode for a while");
+		mode = 0;
+		type_timeout = long_type_timeout;
+		return;
+	}
+
+	if (mode == 0)
+	{
+		// if they have typed something recently, then stay in manual mode
+		if (now - last_real_time < type_timeout*1000)
+			return;
+
+		// we've entered attract mode, see if we can use what they've typed
+		console.log("ENTERING ATTRACT MODE");
+		let partial = '';
+		new_guesses = [];
+		for(let i = 0 ; i < guess_col ; i++)
+		{
+			partial += rows[guess_row][i].innerText;
+			new_guesses.push("Delete");
+		}
+
+		const possible = possible_words.filter((w) => w.startsWith(partial));
+		console.log("possible extentsions", partial, possible);
+		if (possible.length > 0)
+		{
+			let new_guess = possible[Math.floor(Math.random()*possible.length)];
+			new_guess = new_guess.substring(guess_col);
+			new_guesses = [];
+			for(let c of new_guess)
+				new_guesses.push(c);
+			new_guesses.push("Enter");
+		}
+
+		mode = 1;
+	}
+
+	// type in the guesses and the typing speed
+	if (now - last_synthetic < (type_speed + Math.random()/2) * 1000)
+		return;
+
+	// if we have typed everything, then we're done
+	if (new_guesses.length == 0)
+	{
+		mode = 0;
+		last_time = last_real_time = now;
+		type_timeout = short_type_timeout;
+		return;
+	}
+
+	const new_guess = new_guesses.shift();
+	place_letter(new_guess, 'synthetic');
+	last_synthetic = now;
+}
+
 function draw_game()
 {
+	attract_mode();
+
 	background(0);
 
 	textFont(font);
@@ -81,26 +166,6 @@ function draw()
 {
 	if (!in_charge)
 		return;
-
-	// if no one has typed anything, try a word from the possible list
-	const now = new Date().getTime();
-	if (now - last_time > type_timeout*1000)
-	{
-		// todo: if the current row has a partial guess, try to complete it
-		const new_guess = possible_words[Math.floor(Math.random()*possible_words.length)];
-		let i = 0;
-		let f = () => {
-			if (i == word_length)
-			{
-				place_letter("Enter", 'synthetic');
-				return;
-			}
-			place_letter(new_guess[i++], 'synthetic');
-			window.setTimeout(f, type_speed*1000);
-		};
-
-		f();
-	}
 
 	const orig = background(0);
 	const orig_renderer = orig._renderer;
